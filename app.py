@@ -124,3 +124,17 @@ async def calculate_roots_and_growth(expression: str):
         return {"roots": [float(root) for root in roots], "message": "Success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+@app.post("/calculate/derivative/")
+async def calculate_derivative(expression: str):
+    try:
+        # Parse la expresión matemática
+        x = symbols('x')
+        expr = sympify(expression)
+
+        # Calcula la derivada de la expresión
+        derivative = diff(expr, x)
+
+        return {"derivative": str(derivative), "message": "Success"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
