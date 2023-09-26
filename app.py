@@ -2,8 +2,13 @@ from fastapi import FastAPI, HTTPException
 from sympy import symbols, sympify, Eq, solve, lambdify, diff
 import matplotlib.pyplot as plt
 import numpy as np
+from fastapi.responses import FileResponse
+import os
 
 app = FastAPI()
+
+# Define la ubicación donde se guardarán las imágenes
+IMAGE_FOLDER = "static"
 
 @app.post("/calculate/")
 async def calculate(expression: str, x_range: str):
@@ -31,13 +36,13 @@ async def calculate(expression: str, x_range: str):
         plt.grid(True)
 
         # Guardar la gráfica en un archivo
-        plt.savefig('static/plot.png')
+        graph_file = os.path.join(IMAGE_FOLDER, 'plot.png')
+        plt.savefig(graph_file)
 
-        return {"message": "Success"}
+        # Devolver la gráfica como un archivo descargable
+        return FileResponse(graph_file, headers={"Content-Disposition": "attachment; filename=plot.png"})
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-
 
 @app.post("/calculate/roots/")
 async def calculate_roots(expression: str):
@@ -54,7 +59,7 @@ async def calculate_roots(expression: str):
         func = lambdify(x, expr, 'numpy')
 
         # Generar valores para x
-        x_values = np.linspace(-10, 10, 400)  # Cambia el rango si es necesario
+        x_values = np.linspace(-10, 10, 400)
         y_values = func(x_values)
 
         # Graficar la función
@@ -71,12 +76,13 @@ async def calculate_roots(expression: str):
         plt.grid(True)
 
         # Guardar la gráfica en un archivo
-        plt.savefig('static/plot.png')
+        graph_file = os.path.join(IMAGE_FOLDER, 'plot.png')
+        plt.savefig(graph_file)
 
-        return {"roots": [float(root) for root in roots], "message": "Success"}
+        # Devolver la gráfica como un archivo descargable
+        return FileResponse(graph_file, headers={"Content-Disposition": "attachment; filename=plot.png"})
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
 
 @app.post("/calculate/roots_and_growth/")
 async def calculate_roots_and_growth(expression: str):
@@ -95,7 +101,7 @@ async def calculate_roots_and_growth(expression: str):
         deriv = lambdify(x, diff(expr, x), 'numpy')
 
         # Generar valores para x
-        x_values = np.linspace(-10, 10, 400)  # Cambia el rango si es necesario
+        x_values = np.linspace(-10, 10, 400)
         y_values = func(x_values)
         derivative_values = deriv(x_values)
 
@@ -119,9 +125,11 @@ async def calculate_roots_and_growth(expression: str):
         plt.grid(True)
 
         # Guardar la gráfica en un archivo
-        plt.savefig('static/plot.png')
+        graph_file = os.path.join(IMAGE_FOLDER, 'plot.png')
+        plt.savefig(graph_file)
 
-        return {"roots": [float(root) for root in roots], "message": "Success"}
+        # Devolver la gráfica como un archivo descargable
+        return FileResponse(graph_file, headers={"Content-Disposition": "attachment; filename=plot.png"})
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
