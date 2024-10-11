@@ -23,3 +23,6 @@ Generates and returns a plot of a given mathematical expression over a specified
 
 
 to be honest this readme file was made using ChatGPT
+
+![Plot Example](https://github.com/tomasreuque/New-Folder/blob/master/static/plot.png)
+
